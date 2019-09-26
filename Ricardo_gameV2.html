@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dragon Ball</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans" rel="stylesheet">
+</head>
+
+<script>
+    
+    window.addEventListener("load",start);
+    
+    //ARRAY & VARIABELE
+    var ballen = [];
+    var speler;
+    this.music = new Audio('Kid_Goku_Theme.mp3');
+    this.rotatie = 0;
+    this.teller = 0;
+    this.aantalBallen = 20;
+    
+
+    
+   
+    
+    //START
+    function start() {
+        canvas = document.querySelector("canvas");
+        ctx = canvas.getContext("2d");
+        this.music.play();
+    
+        
+        for(i=0; i < aantalBallen; i++){
+             
+    //RANDOM AANMAKEN & OBJECTEN AANMAKEN
+             var rand = Math.random();
+             this.randY = (Math.random()*800);
+             var randVY = (Math.random()*8)+0.5;
+             
+             ballen[i] = new Ball(rand * 650,-randY,randVY,50,50);
+            
+             ballen[i].draw(ctx);
+            
+             speler = new Goku(300,150,150);
+             speler.draw(ctx);
+            
+         }
+        
+        //MOUSE COOR
+        canvas.addEventListener("mousemove", hover);
+
+        Animate();
+        
+    }
+    
+    //FUNCTION MOUSE
+    function hover(arg){
+            speler.xGoku = arg.pageX-500;
+            
+        }
+    
+     
+    //BALL
+     function Ball(x,y,vy,h,w) {
+         
+         this.xBall=x;
+         this.yBall=y;
+         this.vyBall=vy;
+         var randomROT = Math.random();
+         this.hoogte = h;
+         this.wijdte = w;
+         
+         
+         var Afb = document.querySelectorAll("img") [1];
+        
+         this.draw = function (context) {
+             
+    //ROTATE
+              
+             ctx.save();
+             ctx.translate(this.xBall+ (this.wijdte/2), this.yBall + (this.hoogte/2));
+             ctx.rotate((randomROT * rotatie) * Math.PI/180);
+             ctx.translate(-this.xBall-(this.wijdte/2), -this.yBall - (this.hoogte/2));
+             ctx.drawImage(Afb, this.xBall, this.yBall,this.hoogte,this.wijdte);
+             ctx.restore();
+         
+         }
+        }
+    
+    //POPPETJE GOKU
+    function Goku(x,h,w){
+        
+        this.hoogte = h;
+        this.wijdte = w;
+        
+        this.xGoku = x;
+        this.yGoku = 500;
+        var Afb = document.querySelectorAll("img") [0];
+        
+        this.draw = function (context) {
+             context.drawImage(Afb, this.xGoku, this.yGoku, this.hoogte, this.wijdte);
+        
+    }
+        }
+    
+    
+    //ANIMATE
+    function Animate() {
+    //CLEAR
+        ctx.clearRect(0,0,700,700);
+        
+    
+        
+    //UPDATE HET SPEL
+        for(i=0; i < ballen.length; i++){
+             ballen[i].yBall += ballen[i].vyBall;
+             
+    //WINNEN
+            if(teller == 11){
+                    
+                    teller = 0;
+                    pScore.innerHTML = teller;
+                    alert("GEWONNEN!");
+                    
+                    for(j=0; j < ballen.length; j++){
+                    ballen[j].yBall = -1000;
+                    ballen[j].draw(ctx);
+                    
+                }
+                    
+                 }
+      
+    //COLLISION
+            if(ballen[i].yBall + ballen[i].hoogte >=        speler.yGoku 
+               && ballen[i].yBall <= speler.yGoku + speler.hoogte 
+               && ballen[i].xBall + ballen[i].wijdte >= speler.xGoku 
+               && ballen[i].xBall <= speler.xGoku + speler.wijdte){
+               
+               
+               this.teller++;
+               this.pScore = document.getElementsByTagName("p") [1];
+               pScore.innerHTML = teller;
+                
+               ballen[i].yBall = -randY;
+                
+            }
+            
+          
+                  
+               
+            
+            if(ballen[i].yBall + ballen[i].hoogte >= 700){
+                alert("GAME OVER");
+                
+                for(j=0; j < ballen.length; j++){
+                    ballen[j].yBall = -randY;
+                    
+                }
+                
+                teller = 0;
+                pScore.innerHTML = teller;
+                
+                
+
+                
+            }
+             
+         }
+        
+    //DRAW
+        for(i=0; i < ballen.length; i++){
+        this.rotatie++;
+        ballen[i].draw(ctx);
+        }
+        
+        speler.draw(ctx);
+        
+         setTimeout(Animate,33);
+    }
+    
+    
+
+</script>
+
+<body>
+   
+   <div class="wrapper">
+       
+        <div class="score">  
+            <p class="counter">SCORE:</p>
+            <p class="counter">0</p>
+            <p class="counter">BEHAAL EEN SCORE VAN</p>
+            <p class="counter">10</p>
+            <p class="counter">OM TE WINNEN!</p>
+        </div>
+        
+        <canvas id="mycanvas" width="700" height="700">
+
+            <img src="Goku.png" alt="">
+            <img src="DragonBall.png" alt="">
+            
+        </canvas>
+        
+    </div>
+    
+<style>
+    
+    
+    body{
+        background-color: darkorange;
+    }
+    .score{
+        text-align: center;
+        position: fixed;
+        left:70px;
+        top: 35px;
+        padding: 5px;
+        
+        
+    }
+    
+    .counter{
+        font-family: 'Black Han Sans';
+        color: white;
+        font-size:20px;
+    }
+    
+    canvas{
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        
+        background-image: url(backgroundclouds.jpg);
+        background-repeat : no-repeat;
+        background-size: cover;
+        background-position: center;
+        display: inline;
+    }    
+</style>
+</body>
+
+
+</html>
